@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.Lukas Barber Shop — Agendamento Online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<style>
+  :root{
+    --bg:#0B0B0D;
+    --bg-soft:#141417;
+    --card:#1A1A1E;
+    --card-2:#202024;
+    --line:rgba(255,255,255,.09);
+    --gold:#D4AF6A;
+    --gold-deep:#B8923F;
+    --gold-soft:rgba(212,175,106,.12);
+    --white:#F5F1E9;
+    --ink-soft:#A8A296;
+    --danger:#E05C5C;
+    --ok:#5CC28A;
+    --maxw:1160px;
+    --r-sm:12px;
+    --r-md:18px;
+    --r-lg:26px;
+    --shadow-md:0 16px 40px rgba(0,0,0,.45);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Manrope',sans-serif;
+    color:var(--white);
+    background:var(--bg);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Archivo',sans-serif;
+    font-weight:800;
+    color:var(--white);
+    line-height:1.14;
+    letter-spacing:-.01em;
+  }
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  button{font-family:inherit;cursor:pointer;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+  .gold{color:var(--gold);}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:14px 26px;font-weight:700;font-size:14.5px;
+    border:1.5px solid transparent;border-radius:999px;
+    transition:transform .15s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+    white-space:nowrap;
+  }
+  .btn-gold{background:linear-gradient(135deg,#E4C583,var(--gold));color:#1A1305;box-shadow:0 10px 24px rgba(212,175,106,.28);}
+  .btn-gold:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(212,175,106,.4);}
+  .btn-outline{background:transparent;color:var(--white);border-color:var(--line);}
+  .btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+  .btn-sm{padding:10px 18px;font-size:13px;}
+  .btn-block{width:100%;}
+  input,select,textarea{
+    width:100%;background:var(--bg-soft);border:1.5px solid var(--line);color:var(--white);
+    padding:13px 16px;border-radius:var(--r-sm);font-family:inherit;font-size:14.5px;
+    transition:border-color .2s ease;
+  }
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);}
+  label{font-size:12.5px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;display:block;margin-bottom:8px;}
+  .field{margin-bottom:18px;}
+
+  /* ---- Header ---- */
+  header{
+    position:sticky;top:0;z-index:40;
+    background:rgba(11,11,13,.85);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  header .wrap{display:flex;align-items:center;justify-content:space-between;height:80px;}
+  .logo-lockup{display:flex;align-items:center;gap:12px;}
+  .logo-lockup img{width:44px;height:52px;border-radius:10px;object-fit:cover;object-position:top;box-shadow:0 4px 14px rgba(212,175,106,.25);}
+  .logo-word{font-family:'Archivo',sans-serif;font-weight:800;font-size:17px;color:var(--white);line-height:1.05;}
+  .logo-word span{display:block;font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-top:2px;}
+  nav.main-nav{display:flex;gap:4px;font-weight:600;font-size:14px;color:var(--ink-soft);}
+  nav.main-nav a{padding:9px 15px;border-radius:999px;transition:background .2s ease,color .2s ease;}
+  nav.main-nav a:hover{color:var(--gold);background:var(--gold-soft);}
+  @media (max-width:940px){ nav.main-nav{display:none;} }
+
+  /* ---- Hero ---- */
+  .hero{position:relative;overflow:hidden;padding:70px 0 90px;}
+  .hero::before{
+    content:"";position:absolute;inset:0;z-index:0;
+    background:
+      radial-gradient(circle at 85% 10%, rgba(212,175,106,.16), transparent 45%),
+      radial-gradient(circle at 10% 90%, rgba(212,175,106,.08), transparent 40%);
+  }
+  .hero-grain{position:absolute;inset:0;z-index:0;opacity:.5;
+    background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size:22px 22px;}
+  .hero .wrap{position:relative;z-index:1;text-align:center;max-width:760px;}
+  .hero .kicker{
+    display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+    color:var(--gold);letter-spacing:.08em;text-transform:uppercase;
+    border:1px solid var(--line);border-radius:999px;padding:8px 18px;margin-bottom:26px;
+  }
+  .hero h1{font-size:clamp(34px,5.4vw,56px);}
+  .hero p.lead{margin:22px auto 0;font-size:18px;color:var(--ink-soft);max-width:52ch;}
+  .hero-actions{display:flex;gap:14px;justify-content:center;margin-top:36px;flex-wrap:wrap;}
+
+  .trust-strip{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin-top:52px;padding-top:36px;border-top:1px solid var(--line);}
+  .trust-item{text-align:center;}
+  .trust-item .num{font-family:'Archivo',sans-serif;font-weight:800;font-size:26px;color:var(--gold);}
+  .trust-item .lbl{font-size:12.5px;color:var(--ink-soft);font-weight:600;margin-top:2px;}
+
+  /* ---- Section shell ---- */
+  section{padding:88px 0;}
+  .section-head{max-width:620px;margin:0 auto 48px;text-align:center;}
+  .section-head .tag{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;}
+  .section-head h2{font-size:clamp(26px,3.4vw,38px);}
+  .section-head p{margin-top:14px;color:var(--ink-soft);font-size:16px;}
+  .alt{background:var(--bg-soft);}
+
+  /* ---- Barbers ---- */
+  .barbers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  @media (max-width:860px){.barbers-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:560px){.barbers-grid{grid-template-columns:1fr;}}
+  .barber-card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+    padding:26px;text-align:center;cursor:pointer;transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .barber-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-md);border-color:var(--gold-deep);}
+  .barber-avatar{
+    width:96px;height:96px;border-radius:50%;margin:0 auto 18px;object-fit:cover;
+    border:2px solid var(--gold);background:var(--bg-soft);
+    display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:30px;color:var(--gold);
+  }
+  .barber-card h3{font-size:18px;margin-bottom:4px;}
+  .barber-card .spec{font-size:13.5px;color:var(--ink-soft);margin-bottom:16px;min-height:38px;}
+  .barber-card .book-hint{font-size:12.5px;font-weight:700;color:var(--gold);display:inline-flex;align-items:center;gap:6px;}
+
+  /* ---- Services / Products ---- */
+  .services-list{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  @media (max-width:700px){.services-list{grid-template-columns:1fr;}}
+  .service-row{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:20px 24px;
+  }
+  .service-row h3{font-size:16px;font-weight:700;color:var(--white);}
+  .service-row .price{font-family:'Archivo',sans-serif;font-weight:800;color:var(--gold);font-size:18px;white-space:nowrap;}
+
+  /* ---- Gallery ---- */
+  .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  @media (max-width:860px){.gallery-grid{grid-template-columns:repeat(2,1fr);}}
+  .gallery-grid img{width:100%;height:280px;object-fit:cover;border-radius:var(--r-md);border:1px solid var(--line);}
+
+  /* ---- Testimonials ---- */
+  .test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  @media (max-width:860px){.test-grid{grid-template-columns:1fr;}}
+  .test-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:28px;}
+  .test-card .stars{color:var(--gold);letter-spacing:2px;margin-bottom:14px;}
+  .test-card p.quote{font-size:15px;color:var(--white);margin-bottom:18px;}
+  .test-card .who{font-weight:700;font-size:14px;color:var(--gold);}
+
+  /* ---- Location ---- */
+  .loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+  @media (max-width:860px){.loc-grid{grid-template-columns:1fr;}}
+  .loc-info{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:32px;}
+  .loc-info .row{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--line);}
+  .loc-info .row:last-child{border-bottom:none;}
+  .loc-info .row svg{width:19px;height:19px;color:var(--gold);flex-shrink:0;margin-top:2px;}
+  .loc-info dt{font-size:12px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;}
+  .loc-info dd{font-size:15px;font-weight:600;color:var(--white);margin-top:2px;}
+  .map-box{border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line);min-height:300px;}
+  .map-box iframe{width:100%;height:100%;min-height:300px;border:0;filter:invert(.92) hue-rotate(180deg) saturate(.7) brightness(.95);}
+
+  /* ---- Footer ---- */
+  footer{padding:50px 0 28px;border-top:1px solid var(--line);}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;}
+  footer .fcol .tag-title{font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+  footer .fcol p, footer .fcol a{font-size:14px;color:var(--ink-soft);display:block;margin-top:8px;}
+  footer .fcol a:hover{color:var(--gold);}
+  .fine{font-size:12px;color:#5C5A54;margin-top:30px;border-top:1px solid var(--line);padding-top:18px;text-align:center;}
+
+  /* ---- Hamburger menu (bottom-left) ---- */
+  .hb-btn{
+    position:fixed;bottom:24px;left:24px;z-index:70;
+    width:58px;height:58px;border-radius:50%;background:var(--gold);color:#1A1305;
+    display:flex;align-items:center;justify-content:center;border:none;
+    box-shadow:0 10px 26px rgba(212,175,106,.4);transition:transform .2s ease;
+  }
+  .hb-btn:hover{transform:scale(1.07);}
+  .hb-btn svg{width:24px;height:24px;}
+  .hb-menu{
+    position:fixed;bottom:92px;left:24px;z-index:70;
+    background:var(--card-2);border:1px solid var(--line);border-radius:var(--r-md);
+    box-shadow:var(--shadow-md);padding:10px;min-width:220px;
+    display:none;flex-direction:column;gap:2px;
+  }
+  .hb-menu.open{display:flex;}
+  .hb-menu button{
+    display:flex;align-items:center;gap:12px;background:none;border:none;color:var(--white);
+    padding:13px 14px;border-radius:var(--r-sm);font-size:14.5px;font-weight:600;text-align:left;width:100%;
+    transition:background .15s ease;
+  }
+  .hb-menu button:hover{background:var(--gold-soft);color:var(--gold);}
+  .hb-menu button svg{width:18px;height:18px;flex-shrink:0;}
+
+  /* ---- Modal ---- */
+  .modal-overlay{
+    position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.72);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+    max-width:520px;width:100%;max-height:88vh;overflow-y:auto;padding:32px;position:relative;
+  }
+  .modal-close{position:absolute;top:20px;right:20px;background:var(--bg-soft);border:1px solid var(--line);
+    width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);}
+  .modal-close:hover{color:var(--gold);border-color:var(--gold);}
+  .modal-box h2{font-size:22px;margin-bottom:6px;}
+  .modal-sub{color:var(--ink-soft);font-size:14px;margin-bottom:24px;}
+  .step-dots{display:flex;gap:6px;margin-bottom:22px;}
+  .step-dots span{height:4px;flex:1;border-radius:2px;background:var(--line);}
+  .step-dots span.done{background:var(--gold);}
+  .pick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;}
+  .pick-card{
+    border:1.5px solid var(--line);border-radius:var(--r-sm);padding:14px;cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;text-align:left;background:var(--bg-soft);
+  }
+  .pick-card:hover{border-color:var(--gold-deep);}
+  .pick-card.selected{border-color:var(--gold);background:var(--gold-soft);}
+  .pick-card .t1{font-weight:700;font-size:14.5px;color:var(--white);}
+  .pick-card .t2{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+  .slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;}
+  @media (max-width:480px){.slots-grid{grid-template-columns:repeat(3,1fr);}}
+  .slot-btn{
+    padding:10px 6px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--bg-soft);
+    color:var(--white);font-size:13.5px;font-weight:600;
+  }
+  .slot-btn:hover{border-color:var(--gold-deep);}
+  .slot-btn.selected{background:var(--gold);border-color:var(--gold);color:#1A1305;}
+  .slot-btn:disabled{opacity:.3;text-decoration:line-through;cursor:not-allowed;}
+  .notice{
+    background:rgba(224,92,92,.12);border:1px solid rgba(224,92,92,.35);color:#F0A0A0;
+    padding:14px 16px;border-radius:var(--r-sm);font-size:13.5px;margin-top:14px;
+  }
+  .notice.ok{background:rgba(92,194,138,.12);border-color:rgba(92,194,138,.35);color:#9EE3BC;}
+  .contact-toggle{display:flex;gap:8px;margin-bottom:14px;}
+  .contact-toggle button{flex:1;padding:11px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--bg-soft);color:var(--ink-soft);font-weight:700;font-size:13.5px;}
+  .contact-toggle button.active{border-color:var(--gold);color:var(--gold);background:var(--gold-soft);}
+  .summary-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;}
+  .summary-row:last-child{border-bottom:none;}
+  .summary-row .k{color:var(--ink-soft);}
+  .summary-row .v{font-weight:700;color:var(--white);}
+
+  /* ---- Panel views (barber panel / meus agendamentos) ---- */
+  .view-page{padding:120px 0 90px;min-height:70vh;}
+  .panel-tabs{display:flex;gap:8px;margin-bottom:34px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:2px;}
+  .panel-tabs button{padding:12px 18px;background:none;border:none;color:var(--ink-soft);font-weight:700;font-size:14px;border-bottom:2px solid transparent;}
+  .panel-tabs button.active{color:var(--gold);border-color:var(--gold);}
+  .panel-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:30px;margin-bottom:20px;}
+  .panel-card h3{font-size:17px;margin-bottom:16px;}
+  .appt-row{
+    display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+    padding:16px 0;border-bottom:1px solid var(--line);
+  }
+  .appt-row:last-child{border-bottom:none;}
+  .appt-row .info b{color:var(--white);display:block;font-size:14.5px;}
+  .appt-row .info span{font-size:13px;color:var(--ink-soft);}
+  .badge{padding:5px 12px;border-radius:999px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
+  .badge.confirmado{background:rgba(92,194,138,.15);color:var(--ok);}
+  .badge.cancelado{background:rgba(224,92,92,.15);color:var(--danger);}
+  .barber-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);}
+  .barber-row:last-child{border-bottom:none;}
+  .barber-row .av{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--bg-soft);border:1.5px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold);font-family:'Archivo',sans-serif;}
+  .barber-row .nm{font-weight:700;font-size:14.5px;flex-grow:1;}
+  .price-edit-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);}
+  .price-edit-row:last-child{border-bottom:none;}
+  .price-edit-row input{width:110px;}
+  .lock-screen{max-width:380px;margin:0 auto;text-align:center;}
+  .lock-icon{width:60px;height:60px;border-radius:50%;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;}
+  .lock-icon svg{width:26px;height:26px;color:var(--gold);}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--ink-soft);font-size:14.5px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="logo-lockup" href="#" onclick="showView('home');return false;">
+      <img src="assets/images/logo.jpg" alt="J.Lukas Barber Shop">
+      <span class="logo-word">J.Lukas<span>Barber Shop</span></span>
+    </a>
+    <nav class="main-nav">
+      <a href="#barbeiros">Barbeiros</a>
+      <a href="#servicos">Serviços</a>
+      <a href="#produtos">Produtos</a>
+      <a href="#galeria">Galeria</a>
+      <a href="#localizacao">Localização</a>
+    </nav>
+    <a class="btn btn-gold btn-sm" href="#" onclick="openBooking();return false;">Agendar</a>
+  </div>
+</header>
+
+<!-- ============ VIEW: HOME (cliente) ============ -->
+<div id="view-home">
+
+  <section class="hero">
+    <div class="hero-grain"></div>
+    <div class="wrap">
+      <div class="kicker">Tradição · Precisão · Estilo</div>
+      <h1>Seu estilo, <span class="gold">nossa assinatura.</span></h1>
+      <p class="lead">Agende seu horário na J.Lukas Barber Shop e viva uma experiência completa em corte, barba e cuidado masculino no Gama, Brasília - DF.</p>
+      <div class="hero-actions">
+        <button class="btn btn-gold" onclick="openBooking()">Agendar agora</button>
+        <a class="btn btn-outline" href="https://wa.me/5561991252226" target="_blank" rel="noopener">Falar no WhatsApp</a>
+      </div>
+      <div class="trust-strip">
+        <div class="trust-item"><div class="num">4.9★</div><div class="lbl">no Google</div></div>
+        <div class="trust-item"><div class="num">+20</div><div class="lbl">anos de experiência</div></div>
+        <div class="trust-item"><div class="num">7</div><div class="lbl">dias por semana</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="barbeiros" class="alt">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="tag">Nossa equipe</div>
+        <h2>Escolha seu barbeiro</h2>
+        <p>Clique em um profissional para já iniciar o agendamento com ele.</p>
+      </div>
+      <div id="barbers-grid" class="barbers-grid">
+        <div class="empty-state">Carregando barbeiros…</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="servicos">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="tag">Serviços</div>
+        <h2>O que fazemos por você</h2>
+      </div>
+      <div id="services-list" class="services-list">
+        <div class="empty-state">Carregando serviços…</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="produtos" class="alt">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="tag">Produtos</div>
+        <h2>Produtos que usamos e vendemos</h2>
+        <p>Selecionados para o cuidado completo do seu cabelo e da sua barba.</p>
+      </div>
+      <div id="products-list" class="services-list">
+        <div class="empty-state">Carregando produtos…</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="galeria">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="tag">Galeria</div>
+        <h2>Alguns trabalhos recentes</h2>
+      </div>
+      <div class="gallery-grid">
+        <img src="assets/images/galeria-1.jpg" alt="Corte degradê feito na J.Lukas Barber Shop">
+        <img src="assets/images/galeria-2.jpg" alt="Corte com cabelo cacheado feito na J.Lukas Barber Shop">
+        <img src="assets/images/galeria-3.jpg" alt="Corte degradê com cabelo cacheado feito na J.Lukas Barber Shop">
+        <img src="assets/images/galeria-4.jpg" alt="Corte moderno feito na J.Lukas Barber Shop">
+      </div>
+    </div>
+  </section>
+
+  <section id="avaliacoes" class="alt">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="tag">Avaliações</div>
+        <h2>O que dizem nossos clientes</h2>
+        <p>Depoimentos reais publicados no perfil do Google Maps da J.Lukas Barber Shop.</p>
+      </div>
+      <div class="test-grid">
+        <div class="test-card">
+          <div class="stars">★★★★★</div>
+          <p class="quote">"Ótimo barbeiro com uma ótima barbearia. Preço super justo e um excelente serviço prestado!!!"</p>
+          <div class="who">Luiz Doriedson</div>
+        </div>
+        <div class="test-card">
+          <div class="stars">★★★★★</div>
+          <p class="quote">"Excelente atendimento. Serviço de extrema qualidade e profissionalismo!!! Super indico."</p>
+          <div class="who">Adriano Azevedo</div>
+        </div>
+        <div class="test-card">
+          <div class="stars">★★★★★</div>
+          <p class="quote">"Atendimento excelente, supera a expectativa do cliente! Profissional com mais de 20 anos de profissão. Parabéns pelo seu trabalho."</p>
+          <div class="who">Gabriel Vitor</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="localizacao">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="tag">Localização</div>
+        <h2>Nos visite no Gama, Brasília</h2>
+      </div>
+      <div class="loc-grid">
+        <div class="loc-info">
+          <dl>
+            <div class="row">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21C12 21 5 14.5 5 9.5C5 6.19 7.69 3.5 11 3.5H13C16.31 3.5 19 6.19 19 9.5C19 14.5 12 21 12 21Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="9.5" r="2.3" stroke="currentColor" stroke-width="1.6"/></svg>
+              <div><dt>Endereço</dt><dd>St. Sul Praça 02, Bloco A, Loja 05 — Gama, Brasília - DF, 72415-130</dd></div>
+            </div>
+            <div class="row">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 5C4 5 5 4 6.5 4C7 5.5 8 7 9 8C8 9 7 9.5 7 9.5C8 12.5 11.5 16 14.5 17C14.5 17 15 16 16 15C17 16 18.5 17 20 17C20 18.5 19 19.5 19 19.5C13 21.5 4 12.5 4 5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+              <div><dt>Telefone / WhatsApp</dt><dd>(61) 99125-2226</dd></div>
+            </div>
+            <div class="row">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12L14.5 14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/></svg>
+              <div><dt>Horário</dt><dd>Seg–Sáb: 08:00–20:00 · Dom: 08:00–14:30</dd></div>
+            </div>
+          </dl>
+          <a class="btn btn-outline btn-block" style="margin-top:20px" href="https://www.google.com/maps/search/?api=1&query=J.Lukas+Barber+Shop+St+Sul+Pra%C3%A7a+02+Bloco+A+Loja+05+Gama+Bras%C3%ADlia+DF" target="_blank" rel="noopener">Abrir no Google Maps</a>
+        </div>
+        <div class="map-box">
+          <iframe src="https://maps.google.com/maps?q=St.%20Sul%20Pra%C3%A7a%2002%20Bloco%20A%20Loja%2005%2C%20Gama%2C%20Bras%C3%ADlia%20-%20DF%2C%2072415-130&z=16&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Localização da J.Lukas Barber Shop no mapa"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="fcol">
+        <div class="logo-lockup" style="margin-bottom:12px;">
+          <img src="assets/images/logo.jpg" alt="J.Lukas Barber Shop">
+          <span class="logo-word">J.Lukas<span>Barber Shop</span></span>
+        </div>
+        <p>Barbearia no Gama, Brasília - DF.</p>
+      </div>
+      <div class="fcol">
+        <div class="tag-title">Contato</div>
+        <a href="tel:+5561991252226">(61) 99125-2226</a>
+        <a href="https://wa.me/5561991252226" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+      <div class="fcol">
+        <div class="tag-title">Endereço</div>
+        <p>St. Sul Praça 02, Bloco A, Loja 05<br>Gama, Brasília - DF</p>
+      </div>
+    </div>
+    <div class="wrap fine">J.Lukas Barber Shop — agendamento online.</div>
+  </footer>
+
+</div>
+
+<!-- ============ VIEW: MEUS AGENDAMENTOS ============ -->
+<div id="view-my" class="view-page" style="display:none;">
+  <div class="wrap" style="max-width:620px;">
+    <div class="section-head" style="text-align:left;margin-bottom:30px;">
+      <div class="tag">Meus agendamentos</div>
+      <h2>Consultar meu agendamento</h2>
+      <p>Informe o e-mail ou telefone que você usou ao agendar.</p>
+    </div>
+    <div class="panel-card">
+      <div class="field">
+        <label>E-mail ou telefone</label>
+        <input id="my-contact-input" type="text" placeholder="seu@email.com ou (61) 9....">
+      </div>
+      <button class="btn btn-gold btn-block" onclick="lookupMyAppointments()">Buscar</button>
+    </div>
+    <div id="my-appointments-list"></div>
+  </div>
+</div>
+
+<!-- ============ VIEW: PAINEL DO BARBEIRO ============ -->
+<div id="view-panel" class="view-page" style="display:none;">
+  <div class="wrap">
+
+    <div id="panel-lock" class="lock-screen">
+      <div class="lock-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 11V7.5C8 5 9.8 3.5 12 3.5C14.2 3.5 16 5 16 7.5V11" stroke="currentColor" stroke-width="1.7"/></svg>
+      </div>
+      <h2 style="margin-bottom:10px;">Painel do barbeiro</h2>
+      <p style="color:var(--ink-soft);font-size:14.5px;margin-bottom:24px;">Acesso restrito à equipe da J.Lukas Barber Shop.</p>
+      <div class="field" style="text-align:left;">
+        <label>Senha de acesso</label>
+        <input id="panel-password-input" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPanelPassword()">
+      </div>
+      <button class="btn btn-gold btn-block" onclick="checkPanelPassword()">Entrar</button>
+      <div id="panel-password-error" class="notice" style="display:none;">Senha incorreta. Tente novamente.</div>
+    </div>
+
+    <div id="panel-content" style="display:none;">
+
+      <div id="panel-identify">
+        <div class="section-head" style="text-align:left;">
+          <div class="tag">Painel do barbeiro</div>
+          <h2>Quem é você?</h2>
+          <p>Selecione seu nome na lista, ou se cadastre caso ainda não esteja nela.</p>
+        </div>
+        <div id="panel-identify-list" class="panel-card"></div>
+        <div class="panel-card">
+          <h3>Cadastrar novo barbeiro</h3>
+          <div class="field"><label>Nome</label><input id="new-barber-name" type="text" placeholder="Nome completo"></div>
+          <div class="field"><label>Especialidade (opcional)</label><input id="new-barber-spec" type="text" placeholder="Ex: cortes degradê, barba"></div>
+          <button class="btn btn-gold" onclick="addBarber()">Cadastrar e entrar</button>
+        </div>
+      </div>
+
+      <div id="panel-main" style="display:none;">
+        <div class="section-head" style="text-align:left;">
+          <div class="tag">Painel do barbeiro</div>
+          <h2>Olá, <span id="panel-barber-name" class="gold"></span></h2>
+        </div>
+
+        <div class="panel-tabs">
+          <button class="active" onclick="setPanelTab('agenda')" data-tab="agenda">Minha agenda</button>
+          <button onclick="setPanelTab('servicos')" data-tab="servicos">Serviços e preços</button>
+          <button onclick="setPanelTab('produtos')" data-tab="produtos">Produtos</button>
+          <button onclick="setPanelTab('equipe')" data-tab="equipe">Equipe</button>
+          <button onclick="setPanelTab('perfil')" data-tab="perfil">Editar perfil</button>
+        </div>
+
+        <div id="panel-tab-agenda" class="panel-tab">
+          <div class="panel-card">
+            <h3>Meus próximos agendamentos</h3>
+            <div id="panel-agenda-list"></div>
+          </div>
+        </div>
+
+        <div id="panel-tab-servicos" class="panel-tab" style="display:none;">
+          <div class="panel-card">
+            <h3>Valores dos serviços</h3>
+            <div id="panel-services-list"></div>
+          </div>
+          <div class="panel-card">
+            <h3>Adicionar novo serviço</h3>
+            <div class="field"><label>Nome do serviço</label><input id="new-service-name" type="text"></div>
+            <div class="field"><label>Preço (R$)</label><input id="new-service-price" type="number" min="0" step="0.01"></div>
+            <div class="field"><label>Duração (minutos)</label><input id="new-service-duration" type="number" min="10" step="5" value="30"></div>
+            <button class="btn btn-gold" onclick="addService()">Adicionar serviço</button>
+          </div>
+        </div>
+
+        <div id="panel-tab-produtos" class="panel-tab" style="display:none;">
+          <div class="panel-card">
+            <h3>Produtos à venda</h3>
+            <div id="panel-products-list"></div>
+          </div>
+          <div class="panel-card">
+            <h3>Adicionar novo produto</h3>
+            <div class="field"><label>Nome do produto</label><input id="new-product-name" type="text"></div>
+            <div class="field"><label>Preço (R$)</label><input id="new-product-price" type="number" min="0" step="0.01"></div>
+            <div class="field"><label>Descrição (opcional)</label><textarea id="new-product-desc" rows="2"></textarea></div>
+            <button class="btn btn-gold" onclick="addProduct()">Adicionar produto</button>
+          </div>
+        </div>
+
+        <div id="panel-tab-equipe" class="panel-tab" style="display:none;">
+          <div class="panel-card">
+            <h3>Barbeiros cadastrados</h3>
+            <div id="panel-team-list"></div>
+          </div>
+        </div>
+
+        <div id="panel-tab-perfil" class="panel-tab" style="display:none;">
+          <div class="panel-card">
+            <h3>Editar meu perfil</h3>
+            <div style="text-align:center;margin-bottom:22px;">
+              <img id="panel-profile-preview" class="barber-avatar" style="margin-bottom:14px;" src="">
+              <div>
+                <input type="file" id="panel-photo-input" accept="image/*" style="display:none;" onchange="handleProfilePhoto(event)">
+                <button class="btn btn-outline btn-sm" onclick="document.getElementById('panel-photo-input').click()">Trocar foto</button>
+              </div>
+            </div>
+            <div class="field"><label>Nome</label><input id="panel-edit-name" type="text"></div>
+            <div class="field"><label>Especialidade</label><input id="panel-edit-spec" type="text"></div>
+            <button class="btn btn-gold" onclick="saveProfile()">Salvar alterações</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ HAMBURGER MENU ============ -->
+<button class="hb-btn" onclick="toggleHbMenu()" aria-label="Menu">
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7H20M4 12H20M4 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+</button>
+<div id="hb-menu" class="hb-menu">
+  <button onclick="showView('home');toggleHbMenu()">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 11L12 4L20 11V19C20 19.55 19.55 20 19 20H5C4.45 20 4 19.55 4 19V11Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    Página inicial
+  </button>
+  <button onclick="showView('my');toggleHbMenu()">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 3V7M16 3V7M4 10H20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Meus agendamentos
+  </button>
+  <button onclick="showView('panel');toggleHbMenu()">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 11V7.5C8 5 9.8 3.5 12 3.5C14.2 3.5 16 5 16 7.5V11" stroke="currentColor" stroke-width="1.6"/></svg>
+    Painel do barbeiro
+  </button>
+</div>
+
+<!-- ============ MODAL: AGENDAMENTO ============ -->
+<div id="booking-overlay" class="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeBooking()">✕</button>
+    <div id="booking-content"></div>
+  </div>
+</div>
+<script>
+/* ================= CONFIG ================= */
+// Substitua pelas credenciais do SEU projeto Supabase (veja o guia enviado pelo desenvolvedor).
+const SUPABASE_URL = "COLE_AQUI_A_URL_DO_SEU_PROJETO_SUPABASE";
+const SUPABASE_KEY = "COLE_AQUI_A_CHAVE_PUBLIC_ANON_DO_SUPABASE";
+// EmailJS é opcional (envia e-mail de confirmação/cancelamento). Deixe em branco para desativar.
+const EMAILJS_SERVICE_ID = "";
+const EMAILJS_TEMPLATE_ID = ""; // usado para cancelamento
+const EMAILJS_CONFIRM_TEMPLATE_ID = ""; // template de confirmação de agendamento
+const EMAILJS_PUBLIC_KEY = "";
+const ADMIN_PASSWORD = "lukasADM";
+const WHATSAPP_NUMBER = "5561991252226";
+
+// domingo=0 ... sábado=6 -> [abre, fecha] em "HH:MM", ou null se fechado
+const BUSINESS_HOURS = {
+  0: ["08:00","14:30"],
+  1: ["08:00","20:00"],
+  2: ["08:00","20:00"],
+  3: ["08:00","20:00"],
+  4: ["08:00","20:00"],
+  5: ["08:00","20:00"],
+  6: ["08:00","20:00"],
+};
+const SLOT_MINUTES = 30;
+
+/* ================= INIT ================= */
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+if (EMAILJS_PUBLIC_KEY && window.emailjs) { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+
+let BARBERS = [];
+let SERVICES = [];
+let PRODUCTS = [];
+let currentBarberId = null; // identidade ativa no painel (sessão local)
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadBarbers();
+  loadServices();
+  loadProducts();
+});
+
+async function loadBarbers(){
+  const { data, error } = await sb.from('barbers').select('*').eq('active', true).order('created_at');
+  if (error) {
+    console.error(error);
+    document.getElementById('barbers-grid').innerHTML =
+      `<div class="notice" style="grid-column:1/-1;">Erro ao carregar barbeiros: ${escapeHtml(error.message || JSON.stringify(error))}${error.hint ? '<br><small>Dica: '+escapeHtml(error.hint)+'</small>' : ''}</div>`;
+    return;
+  }
+  BARBERS = data || [];
+  renderBarbersGrid();
+}
+
+async function loadServices(){
+  const { data, error } = await sb.from('services').select('*').eq('active', true).order('price');
+  if (error) {
+    console.error(error);
+    document.getElementById('services-list').innerHTML =
+      `<div class="notice" style="grid-column:1/-1;">Erro ao carregar serviços: ${escapeHtml(error.message || JSON.stringify(error))}${error.hint ? '<br><small>Dica: '+escapeHtml(error.hint)+'</small>' : ''}</div>`;
+    return;
+  }
+  SERVICES = data || [];
+  renderServicesList();
+}
+
+async function loadProducts(){
+  const { data, error } = await sb.from('products').select('*').eq('active', true).order('created_at');
+  if (error) {
+    console.error(error);
+    document.getElementById('products-list').innerHTML =
+      `<div class="notice" style="grid-column:1/-1;">Erro ao carregar produtos: ${escapeHtml(error.message || JSON.stringify(error))}${error.hint ? '<br><small>Dica: '+escapeHtml(error.hint)+'</small>' : ''}</div>`;
+    return;
+  }
+  PRODUCTS = data || [];
+  renderProductsList();
+}
+
+function initials(name){
+  return (name||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]?.toUpperCase()).join('');
+}
+function money(v){ return 'R$ ' + Number(v).toFixed(2).replace('.', ','); }
+
+/* ================= RENDER: HOME ================= */
+function renderBarbersGrid(){
+  const el = document.getElementById('barbers-grid');
+  if (!BARBERS.length){ el.innerHTML = '<div class="empty-state">Nenhum barbeiro cadastrado no momento.</div>'; return; }
+  el.innerHTML = BARBERS.map(b => `
+    <div class="barber-card" onclick="openBooking('${b.id}')">
+      ${b.photo_url
+        ? `<img class="barber-avatar" src="${b.photo_url}" alt="${escapeHtml(b.name)}">`
+        : `<div class="barber-avatar">${initials(b.name)}</div>`}
+      <h3>${escapeHtml(b.name)}</h3>
+      <div class="spec">${escapeHtml(b.specialty || 'Barbeiro na J.Lukas Barber Shop')}</div>
+      <div class="book-hint">Agendar com ${escapeHtml(b.name.split(' ')[0])} →</div>
+    </div>
+  `).join('');
+}
+
+function renderServicesList(){
+  const el = document.getElementById('services-list');
+  if (!SERVICES.length){ el.innerHTML = '<div class="empty-state">Nenhum serviço cadastrado no momento.</div>'; return; }
+  el.innerHTML = SERVICES.map(s => `
+    <div class="service-row">
+      <h3>${escapeHtml(s.name)}</h3>
+      <div class="price">${money(s.price)}</div>
+    </div>
+  `).join('');
+}
+
+function renderProductsList(){
+  const el = document.getElementById('products-list');
+  if (!PRODUCTS.length){ el.innerHTML = '<div class="empty-state">Nenhum produto cadastrado no momento.</div>'; return; }
+  el.innerHTML = PRODUCTS.map(p => `
+    <div class="service-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
+      <div style="display:flex;justify-content:space-between;width:100%;align-items:center;gap:16px;">
+        <h3>${escapeHtml(p.name)}</h3>
+        <div class="price">${money(p.price)}</div>
+      </div>
+      ${p.description ? `<p style="font-size:13px;color:var(--ink-soft);margin:0;">${escapeHtml(p.description)}</p>` : ''}
+    </div>
+  `).join('');
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str ?? '';
+  return d.innerHTML;
+}
+
+/* ================= NAVEGAÇÃO ENTRE TELAS ================= */
+function showView(name){
+  document.getElementById('view-home').style.display = name === 'home' ? '' : 'none';
+  document.getElementById('view-my').style.display = name === 'my' ? '' : 'none';
+  document.getElementById('view-panel').style.display = name === 'panel' ? '' : 'none';
+  window.scrollTo({top:0, behavior:'instant'});
+  if (name === 'panel') resetPanelToIdentify();
+}
+
+function toggleHbMenu(){
+  document.getElementById('hb-menu').classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('hb-menu');
+  const btn = document.querySelector('.hb-btn');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
+
+/* ================= MEUS AGENDAMENTOS (cliente) ================= */
+async function lookupMyAppointments(){
+  const contact = document.getElementById('my-contact-input').value.trim();
+  const listEl = document.getElementById('my-appointments-list');
+  if (!contact){ listEl.innerHTML = '<div class="notice">Digite um e-mail ou telefone.</div>'; return; }
+  listEl.innerHTML = '<div class="empty-state">Buscando…</div>';
+
+  const { data, error } = await sb.from('appointments')
+    .select('*, barbers(name), services(name)')
+    .eq('client_contact', contact)
+    .order('appt_date', { ascending: false });
+
+  if (error) { listEl.innerHTML = '<div class="notice">Erro ao buscar. Tente novamente.</div>'; console.error(error); return; }
+  if (!data || !data.length){ listEl.innerHTML = '<div class="empty-state">Nenhum agendamento encontrado para esse contato.</div>'; return; }
+
+  MY_LOOKUP_CACHE = data;
+  MY_LOOKUP_CONTACT = contact;
+
+  listEl.innerHTML = data.map(a => `
+    <div class="panel-card" style="margin-top:16px;">
+      <div class="appt-row" style="border:none;padding:0;">
+        <div class="info">
+          <b>${escapeHtml(a.services?.name || 'Serviço')} · ${escapeHtml(a.barbers?.name || 'Barbeiro')}</b>
+          <span>${formatDate(a.appt_date)} às ${a.appt_time}</span>
+          ${a.status === 'cancelado' && a.cancel_reason ? `<span>Motivo do cancelamento: ${escapeHtml(a.cancel_reason)}</span>` : ''}
+        </div>
+        <span class="badge ${a.status}">${a.status}</span>
+      </div>
+      ${a.status === 'confirmado' ? `<button class="btn btn-outline btn-sm" style="margin-top:14px;" onclick="cancelMyAppointment('${a.id}')">Cancelar agendamento</button>` : ''}
+    </div>
+  `).join('');
+}
+
+let MY_LOOKUP_CACHE = [];
+let MY_LOOKUP_CONTACT = '';
+
+async function cancelMyAppointment(id){
+  if (!confirm('Tem certeza que deseja cancelar esse agendamento?')) return;
+
+  const { error } = await sb.from('appointments')
+    .update({ status:'cancelado', cancel_reason:'Cancelado pelo cliente' })
+    .eq('id', id);
+
+  if (error){ alert('Erro ao cancelar. Tente novamente.'); console.error(error); return; }
+
+  await lookupMyAppointments();
+}
+
+
+function formatDate(iso){
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+/* ================= AGENDAMENTO (modal) ================= */
+let booking = { serviceId:null, barberId:null, date:null, time:null };
+
+function openBooking(barberId){
+  booking = { serviceId:null, barberId: barberId || null, date:null, time:null };
+  document.getElementById('booking-overlay').classList.add('open');
+  renderBookingStep();
+}
+function closeBooking(){
+  document.getElementById('booking-overlay').classList.remove('open');
+}
+
+function renderBookingStep(){
+  const el = document.getElementById('booking-content');
+
+  // Passo 1: serviço
+  if (!booking.serviceId){
+    el.innerHTML = `
+      <h2>Agendar horário</h2>
+      <div class="modal-sub">Escolha o serviço desejado.</div>
+      <div class="pick-grid">
+        ${SERVICES.map(s => `
+          <div class="pick-card" onclick="selectService('${s.id}')">
+            <div class="t1">${escapeHtml(s.name)}</div>
+            <div class="t2">${money(s.price)} · ${s.duration_minutes} min</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    return;
+  }
+
+  // Passo 2: barbeiro
+  if (!booking.barberId){
+    el.innerHTML = `
+      <h2>Escolha o barbeiro</h2>
+      <div class="modal-sub">Com quem você quer agendar?</div>
+      <div class="pick-grid">
+        ${BARBERS.map(b => `
+          <div class="pick-card" onclick="selectBarber('${b.id}')">
+            <div class="t1">${escapeHtml(b.name)}</div>
+            <div class="t2">${escapeHtml(b.specialty || '')}</div>
+          </div>
+        `).join('')}
+      </div>
+      <button class="btn btn-outline btn-sm" style="margin-top:14px;" onclick="booking.serviceId=null;renderBookingStep()">← voltar</button>
+    `;
+    return;
+  }
+
+  // Passo 3: data e horário
+  if (!booking.time){
+    const today = new Date();
+    const minDate = today.toISOString().slice(0,10);
+    el.innerHTML = `
+      <h2>Escolha data e horário</h2>
+      <div class="modal-sub">Horários com base na agenda do barbeiro.</div>
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="booking-date-input" min="${minDate}" value="${booking.date || ''}" onchange="pickDate(this.value)">
+      </div>
+      <div id="booking-slots"></div>
+      <button class="btn btn-outline btn-sm" style="margin-top:14px;" onclick="booking.barberId=null;renderBookingStep()">← voltar</button>
+    `;
+    if (booking.date) pickDate(booking.date);
+    return;
+  }
+
+  // Passo 4: dados do cliente
+  if (!booking._confirmed){
+    const svc = SERVICES.find(s=>s.id===booking.serviceId);
+    const bar = BARBERS.find(b=>b.id===booking.barberId);
+    el.innerHTML = `
+      <h2>Seus dados</h2>
+      <div class="modal-sub">Precisamos disso para confirmar e, se necessário, avisar sobre o horário.</div>
+      <div class="panel-card" style="padding:18px;margin-bottom:18px;">
+        <div class="summary-row"><span class="k">Serviço</span><span class="v">${escapeHtml(svc.name)}</span></div>
+        <div class="summary-row"><span class="k">Barbeiro</span><span class="v">${escapeHtml(bar.name)}</span></div>
+        <div class="summary-row"><span class="k">Data</span><span class="v">${formatDate(booking.date)} às ${booking.time}</span></div>
+        <div class="summary-row"><span class="k">Valor</span><span class="v">${money(svc.price)}</span></div>
+      </div>
+      <div class="field"><label>Seu nome</label><input id="client-name-input" type="text" placeholder="Nome completo"></div>
+      <div class="contact-toggle">
+        <button id="ct-email" class="active" onclick="setContactType('email')">E-mail</button>
+        <button id="ct-phone" onclick="setContactType('telefone')">Telefone</button>
+      </div>
+      <div class="field"><input id="client-contact-input" type="text" placeholder="seu@email.com"></div>
+      <div id="booking-error"></div>
+      <button class="btn btn-gold btn-block" onclick="submitBooking()">Confirmar agendamento</button>
+      <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="booking.time=null;renderBookingStep()">← voltar</button>
+    `;
+    return;
+  }
+
+  // Passo 5: sucesso
+  const svc = SERVICES.find(s=>s.id===booking.serviceId);
+  const bar = BARBERS.find(b=>b.id===booking.barberId);
+  el.innerHTML = `
+    <h2>Agendamento confirmado! ✂️</h2>
+    <div class="notice ok">Seu horário foi reservado com sucesso.</div>
+    <div class="panel-card" style="padding:18px;margin-top:16px;">
+      <div class="summary-row"><span class="k">Serviço</span><span class="v">${escapeHtml(svc.name)}</span></div>
+      <div class="summary-row"><span class="k">Barbeiro</span><span class="v">${escapeHtml(bar.name)}</span></div>
+      <div class="summary-row"><span class="k">Data</span><span class="v">${formatDate(booking.date)} às ${booking.time}</span></div>
+    </div>
+    <p style="color:var(--ink-soft);font-size:13.5px;margin-top:16px;">Guarde o e-mail/telefone informado — é com ele que você consulta ou é avisado sobre esse agendamento.</p>
+    <button class="btn btn-gold btn-block" style="margin-top:18px;" onclick="closeBooking()">Fechar</button>
+  `;
+}
+
+function selectService(id){ booking.serviceId = id; renderBookingStep(); }
+function selectBarber(id){ booking.barberId = id; renderBookingStep(); }
+
+let contactType = 'email';
+function setContactType(type){
+  contactType = type;
+  document.getElementById('ct-email').classList.toggle('active', type==='email');
+  document.getElementById('ct-phone').classList.toggle('active', type==='telefone');
+  document.getElementById('client-contact-input').placeholder = type==='email' ? 'seu@email.com' : '(61) 9....-....';
+}
+
+async function pickDate(dateStr){
+  booking.date = dateStr;
+  const slotsEl = document.getElementById('booking-slots');
+  slotsEl.innerHTML = '<div class="empty-state">Verificando horários…</div>';
+
+  const dow = new Date(dateStr + 'T12:00:00').getDay();
+  const hours = BUSINESS_HOURS[dow];
+  if (!hours){
+    slotsEl.innerHTML = '<div class="notice">A barbearia está fechada nesse dia. Escolha outra data.</div>';
+    return;
+  }
+
+  const { data: existing, error } = await sb.from('appointments')
+    .select('appt_time')
+    .eq('barber_id', booking.barberId)
+    .eq('appt_date', dateStr)
+    .eq('status', 'confirmado');
+
+  if (error){ slotsEl.innerHTML = '<div class="notice">Erro ao verificar horários.</div>'; console.error(error); return; }
+  const taken = new Set((existing||[]).map(r=>r.appt_time));
+
+  const slots = generateSlots(hours[0], hours[1]);
+  const allTaken = slots.every(t => taken.has(t));
+
+  if (allTaken){
+    slotsEl.innerHTML = '<div class="notice">O barbeiro já está ocupado nesse dia. Escolha outra data ou outro barbeiro.</div>';
+    return;
+  }
+
+  slotsEl.innerHTML = `<div class="slots-grid">${slots.map(t => `
+    <button class="slot-btn ${t===booking.time?'selected':''}" ${taken.has(t)?'disabled':''} onclick="pickTime('${t}')">${t}</button>
+  `).join('')}</div>`;
+}
+
+function generateSlots(open, close){
+  const [oh, om] = open.split(':').map(Number);
+  const [ch, cm] = close.split(':').map(Number);
+  let cur = oh*60+om, end = ch*60+cm;
+  const out = [];
+  while (cur < end){
+    const h = String(Math.floor(cur/60)).padStart(2,'0');
+    const m = String(cur%60).padStart(2,'0');
+    out.push(`${h}:${m}`);
+    cur += SLOT_MINUTES;
+  }
+  return out;
+}
+
+function pickTime(t){
+  booking.time = t;
+  renderBookingStep();
+}
+
+async function submitBooking(){
+  const name = document.getElementById('client-name-input').value.trim();
+  const contact = document.getElementById('client-contact-input').value.trim();
+  const errEl = document.getElementById('booking-error');
+  errEl.innerHTML = '';
+
+  if (!name || !contact){
+    errEl.innerHTML = '<div class="notice">Preencha nome e contato.</div>';
+    return;
+  }
+  if (contactType === 'email' && !/^\S+@\S+\.\S+$/.test(contact)){
+    errEl.innerHTML = '<div class="notice">Digite um e-mail válido.</div>';
+    return;
+  }
+
+  const { error } = await sb.from('appointments').insert([{
+    barber_id: booking.barberId,
+    service_id: booking.serviceId,
+    client_name: name,
+    client_contact: contact,
+    contact_type: contactType,
+    appt_date: booking.date,
+    appt_time: booking.time,
+    status: 'confirmado',
+  }]);
+
+  if (error){
+    errEl.innerHTML = '<div class="notice">Não foi possível confirmar. Talvez esse horário acabou de ser preenchido — tente outro.</div>';
+    console.error(error);
+    return;
+  }
+
+  if (contactType === 'email' && EMAILJS_CONFIRM_TEMPLATE_ID && EMAILJS_SERVICE_ID && EMAILJS_PUBLIC_KEY && window.emailjs){
+    const svc = SERVICES.find(s=>s.id===booking.serviceId);
+    const bar = BARBERS.find(b=>b.id===booking.barberId);
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CONFIRM_TEMPLATE_ID, {
+        to_email: contact,
+        client_name: name,
+        barber_name: bar?.name || '',
+        service_name: svc?.name || '',
+        date: formatDate(booking.date),
+        time: booking.time,
+      });
+    } catch(e){ console.error('Falha ao enviar e-mail de confirmação:', e); }
+  } else if (contactType === 'email') {
+    console.warn('Template de confirmação do EmailJS ainda não configurado — e-mail de confirmação não foi enviado.');
+  }
+
+  booking._confirmed = true;
+  renderBookingStep();
+}
+
+/* ================= PAINEL DO BARBEIRO ================= */
+function checkPanelPassword(){
+  const val = document.getElementById('panel-password-input').value;
+  const errEl = document.getElementById('panel-password-error');
+  if (val === ADMIN_PASSWORD){
+    document.getElementById('panel-lock').style.display = 'none';
+    document.getElementById('panel-content').style.display = '';
+    errEl.style.display = 'none';
+    resetPanelToIdentify();
+  } else {
+    errEl.style.display = '';
+  }
+}
+
+function resetPanelToIdentify(){
+  currentBarberId = null;
+  const idEl = document.getElementById('panel-identify');
+  const mainEl = document.getElementById('panel-main');
+  if (!idEl || !mainEl) return;
+  idEl.style.display = '';
+  mainEl.style.display = 'none';
+  renderIdentifyList();
+}
+
+function renderIdentifyList(){
+  const el = document.getElementById('panel-identify-list');
+  if (!BARBERS.length){ el.innerHTML = '<div class="empty-state">Nenhum barbeiro cadastrado ainda. Cadastre-se abaixo.</div>'; return; }
+  el.innerHTML = BARBERS.map(b => `
+    <div class="barber-row" style="cursor:pointer;" onclick="identifyAs('${b.id}')">
+      ${b.photo_url ? `<img class="av" src="${b.photo_url}">` : `<div class="av">${initials(b.name)}</div>`}
+      <div class="nm">${escapeHtml(b.name)}</div>
+      <span class="btn btn-outline btn-sm">Entrar</span>
+    </div>
+  `).join('');
+}
+
+async function addBarber(){
+  const name = document.getElementById('new-barber-name').value.trim();
+  const spec = document.getElementById('new-barber-spec').value.trim();
+  if (!name){ alert('Digite o nome do barbeiro.'); return; }
+  const { data, error } = await sb.from('barbers').insert([{ name, specialty: spec || null }]).select();
+  if (error){ alert('Erro ao cadastrar barbeiro.'); console.error(error); return; }
+  await loadBarbers();
+  identifyAs(data[0].id);
+}
+
+function identifyAs(barberId){
+  currentBarberId = barberId;
+  document.getElementById('panel-identify').style.display = 'none';
+  document.getElementById('panel-main').style.display = '';
+  const b = BARBERS.find(x=>x.id===barberId);
+  document.getElementById('panel-barber-name').textContent = b ? b.name : '';
+  setPanelTab('agenda');
+}
+
+function setPanelTab(tab){
+  ['agenda','servicos','produtos','equipe','perfil'].forEach(t=>{
+    document.getElementById('panel-tab-'+t).style.display = t===tab ? '' : 'none';
+  });
+  document.querySelectorAll('.panel-tabs button').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+  if (tab==='agenda') renderMyAgenda();
+  if (tab==='servicos') renderPanelServices();
+  if (tab==='produtos') renderPanelProducts();
+  if (tab==='equipe') renderPanelTeam();
+  if (tab==='perfil') renderPanelProfile();
+}
+
+async function renderMyAgenda(){
+  const el = document.getElementById('panel-agenda-list');
+  el.innerHTML = '<div class="empty-state">Carregando…</div>';
+  const { data, error } = await sb.from('appointments')
+    .select('*, services(name)')
+    .eq('barber_id', currentBarberId)
+    .eq('status', 'confirmado')
+    .order('appt_date').order('appt_time');
+  if (error){ el.innerHTML = '<div class="notice">Erro ao carregar agenda.</div>'; console.error(error); return; }
+  if (!data || !data.length){ el.innerHTML = '<div class="empty-state">Nenhum agendamento confirmado no momento.</div>'; return; }
+  MY_AGENDA_CACHE = data;
+  el.innerHTML = data.map(a => `
+    <div class="appt-row">
+      <div class="info">
+        <b>${escapeHtml(a.client_name)} · ${escapeHtml(a.services?.name||'')}</b>
+        <span>${formatDate(a.appt_date)} às ${a.appt_time} · contato: ${escapeHtml(a.client_contact)} (${a.contact_type})</span>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="cancelAppointment('${a.id}')">Cancelar</button>
+    </div>
+  `).join('');
+}
+
+let MY_AGENDA_CACHE = [];
+
+async function cancelAppointment(id){
+  const appt = MY_AGENDA_CACHE.find(a => a.id === id);
+  if (!appt){ alert('Agendamento não encontrado. Atualize a página e tente novamente.'); return; }
+
+  const reason = prompt('Motivo do cancelamento (o cliente poderá ver este motivo):', 'Imprevisto do barbeiro');
+  if (reason === null) return;
+
+  const { error } = await sb.from('appointments').update({ status:'cancelado', cancel_reason: reason }).eq('id', id);
+  if (error){ alert('Erro ao cancelar.'); console.error(error); return; }
+
+  const barberName = (BARBERS.find(b => b.id === appt.barber_id) || {}).name || '';
+
+  if (appt.contact_type === 'email' && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY && window.emailjs){
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: appt.client_contact,
+        client_name: appt.client_name,
+        barber_name: barberName,
+        service_name: appt.services?.name || '',
+        date: formatDate(appt.appt_date),
+        time: appt.appt_time,
+        reason: reason,
+      });
+    } catch(e){ console.error('Falha ao enviar e-mail:', e); }
+  } else if (appt.contact_type === 'email') {
+    console.warn('EmailJS não configurado ainda — e-mail de cancelamento não foi enviado de verdade.');
+  }
+
+  renderMyAgenda();
+}
+
+async function renderPanelServices(){
+  const el = document.getElementById('panel-services-list');
+  el.innerHTML = SERVICES.map(s => `
+    <div class="price-edit-row">
+      <div>${escapeHtml(s.name)} <span style="color:var(--ink-soft);font-size:12.5px;">(${s.duration_minutes} min)</span></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="number" step="0.01" min="0" value="${s.price}" id="svc-price-${s.id}">
+        <button class="btn btn-gold btn-sm" onclick="updateServicePrice('${s.id}')">Salvar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function updateServicePrice(id){
+  const val = parseFloat(document.getElementById('svc-price-'+id).value);
+  if (isNaN(val) || val < 0){ alert('Preço inválido.'); return; }
+  const { error } = await sb.from('services').update({ price: val }).eq('id', id);
+  if (error){ alert('Erro ao salvar preço.'); console.error(error); return; }
+  await loadServices();
+  renderPanelServices();
+}
+
+async function addService(){
+  const name = document.getElementById('new-service-name').value.trim();
+  const price = parseFloat(document.getElementById('new-service-price').value);
+  const duration = parseInt(document.getElementById('new-service-duration').value) || 30;
+  if (!name || isNaN(price)){ alert('Preencha nome e preço do serviço.'); return; }
+  const { error } = await sb.from('services').insert([{ name, price, duration_minutes: duration }]);
+  if (error){ alert('Erro ao adicionar serviço.'); console.error(error); return; }
+  document.getElementById('new-service-name').value = '';
+  document.getElementById('new-service-price').value = '';
+  await loadServices();
+  renderPanelServices();
+}
+
+async function renderPanelProducts(){
+  const el = document.getElementById('panel-products-list');
+  if (!PRODUCTS.length){ el.innerHTML = '<div class="empty-state">Nenhum produto cadastrado.</div>'; return; }
+  el.innerHTML = PRODUCTS.map(p => `
+    <div class="price-edit-row">
+      <div>${escapeHtml(p.name)}</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="number" step="0.01" min="0" value="${p.price}" id="prod-price-${p.id}">
+        <button class="btn btn-gold btn-sm" onclick="updateProductPrice('${p.id}')">Salvar</button>
+        <button class="btn btn-outline btn-sm" onclick="deleteProduct('${p.id}')">Remover</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function updateProductPrice(id){
+  const val = parseFloat(document.getElementById('prod-price-'+id).value);
+  if (isNaN(val) || val < 0){ alert('Preço inválido.'); return; }
+  const { error } = await sb.from('products').update({ price: val }).eq('id', id);
+  if (error){ alert('Erro ao salvar preço.'); console.error(error); return; }
+  await loadProducts();
+  renderPanelProducts();
+}
+
+async function addProduct(){
+  const name = document.getElementById('new-product-name').value.trim();
+  const price = parseFloat(document.getElementById('new-product-price').value);
+  const desc = document.getElementById('new-product-desc').value.trim();
+  if (!name || isNaN(price)){ alert('Preencha nome e preço do produto.'); return; }
+  const { error } = await sb.from('products').insert([{ name, price, description: desc || null }]);
+  if (error){ alert('Erro ao adicionar produto.'); console.error(error); return; }
+  document.getElementById('new-product-name').value = '';
+  document.getElementById('new-product-price').value = '';
+  document.getElementById('new-product-desc').value = '';
+  await loadProducts();
+  renderPanelProducts();
+}
+
+async function deleteProduct(id){
+  if (!confirm('Tem certeza que deseja remover este produto?')) return;
+  const { error } = await sb.from('products').delete().eq('id', id);
+  if (error){ alert('Erro ao remover produto.'); console.error(error); return; }
+  await loadProducts();
+  renderPanelProducts();
+}
+
+function renderPanelTeam(){
+  const el = document.getElementById('panel-team-list');
+  if (!BARBERS.length){ el.innerHTML = '<div class="empty-state">Nenhum barbeiro cadastrado.</div>'; return; }
+  el.innerHTML = BARBERS.map(b => `
+    <div class="barber-row">
+      ${b.photo_url ? `<img class="av" src="${b.photo_url}">` : `<div class="av">${initials(b.name)}</div>`}
+      <div class="nm">${escapeHtml(b.name)} ${b.id===currentBarberId ? '<span style="color:var(--gold);font-size:12px;">(você)</span>' : ''}</div>
+      ${b.id===currentBarberId ? `<button class="btn btn-outline btn-sm" onclick="leaveTeam('${b.id}')">Sair da lista</button>` : ''}
+    </div>
+  `).join('');
+}
+
+async function leaveTeam(id){
+  if (!confirm('Tem certeza que deseja sair da lista de barbeiros? Isso removerá seu perfil.')) return;
+  const { error } = await sb.from('barbers').delete().eq('id', id);
+  if (error){ alert('Erro ao remover. Talvez existam agendamentos vinculados a você.'); console.error(error); return; }
+  await loadBarbers();
+  resetPanelToIdentify();
+}
+
+function renderPanelProfile(){
+  const b = BARBERS.find(x=>x.id===currentBarberId);
+  if (!b) return;
+  const img = document.getElementById('panel-profile-preview');
+  if (b.photo_url){ img.src = b.photo_url; img.style.display=''; }
+  else { img.style.display='none'; }
+  document.getElementById('panel-edit-name').value = b.name || '';
+  document.getElementById('panel-edit-spec').value = b.specialty || '';
+}
+
+function handleProfilePhoto(event){
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const img = new Image();
+    img.onload = function(){
+      const canvas = document.createElement('canvas');
+      const size = 300;
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const ratio = Math.max(size/img.width, size/img.height);
+      const w = img.width*ratio, h = img.height*ratio;
+      ctx.drawImage(img, (size-w)/2, (size-h)/2, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+      document.getElementById('panel-profile-preview').src = dataUrl;
+      document.getElementById('panel-profile-preview').style.display = '';
+      document.getElementById('panel-profile-preview').dataset.newPhoto = dataUrl;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveProfile(){
+  const name = document.getElementById('panel-edit-name').value.trim();
+  const spec = document.getElementById('panel-edit-spec').value.trim();
+  const newPhoto = document.getElementById('panel-profile-preview').dataset.newPhoto;
+  if (!name){ alert('O nome não pode ficar em branco.'); return; }
+
+  const update = { name, specialty: spec || null };
+  if (newPhoto) update.photo_url = newPhoto;
+
+  const { error } = await sb.from('barbers').update(update).eq('id', currentBarberId);
+  if (error){ alert('Erro ao salvar perfil.'); console.error(error); return; }
+  await loadBarbers();
+  document.getElementById('panel-barber-name').textContent = name;
+  alert('Perfil atualizado!');
+}
+</script>
+</body>
+</html>
