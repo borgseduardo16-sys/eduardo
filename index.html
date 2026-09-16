@@ -633,9 +633,11 @@
 </div>
 <script>
 /* ================= CONFIG ================= */
-// Substitua pelas credenciais do SEU projeto Supabase (veja o guia enviado pelo desenvolvedor).
-const SUPABASE_URL = "COLE_AQUI_A_URL_DO_SEU_PROJETO_SUPABASE";
-const SUPABASE_KEY = "COLE_AQUI_A_CHAVE_PUBLIC_ANON_DO_SUPABASE";
+const SUPABASE_URL = "https://rladwzeibimurbvqgure.supabase.co";
+const SUPABASE_KEY = "sb_publishable_0SSEaou0xuav9A3ik6w43A_QAjBs_56";
+// As tabelas da J.Lukas usam prefixo próprio para não colidirem com as do site
+// antigo, que roda no mesmo projeto Supabase.
+const TABLE_PREFIX = "jlukas_";
 // EmailJS é opcional (envia e-mail de confirmação/cancelamento). Deixe em branco para desativar.
 const EMAILJS_SERVICE_ID = "";
 const EMAILJS_TEMPLATE_ID = ""; // usado para cancelamento
@@ -660,7 +662,9 @@ const SLOT_MINUTES = 30;
 // Enquanto o Supabase não estiver configurado, o site roda com um banco local
 // (localStorage) para que tudo possa ser testado sem backend.
 const SUPABASE_READY = /^https?:\/\//.test(SUPABASE_URL) && !/^COLE_AQUI/.test(SUPABASE_KEY) && !!window.supabase;
-const sb = SUPABASE_READY ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : createLocalDb();
+const supaClient = SUPABASE_READY ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+let sb = supaClient ? { from: table => supaClient.from(TABLE_PREFIX + table) } : createLocalDb();
+let DEMO_MODE = !SUPABASE_READY;
 if (EMAILJS_PUBLIC_KEY && window.emailjs) { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
 
 function createLocalDb(){
@@ -715,9 +719,10 @@ function createLocalDb(){
   persist();
 
   function withRelations(rows, selectStr){
-    const relations = String(selectStr || '').match(/(\w+)\s*\(/g);
-    if (!relations) return rows;
-    const names = relations.map(r => r.replace(/\s*\($/, ''));
+    // aceita tanto "services(name)" quanto "services:jlukas_services(name)"
+    const names = [...String(selectStr || '').matchAll(/(?:(\w+)\s*:\s*)?(\w+)\s*\(/g)]
+      .map(m => (m[1] || m[2]).replace(TABLE_PREFIX, ''));
+    if (!names.length) return rows;
     return rows.map(r => {
       const copy = { ...r };
       names.forEach(rel => {
@@ -790,8 +795,18 @@ let SERVICES = [];
 let PRODUCTS = [];
 let currentBarberId = null; // identidade ativa no painel (sessão local)
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (!SUPABASE_READY) document.getElementById('demo-bar').classList.add('on');
+document.addEventListener('DOMContentLoaded', async () => {
+  // Se as tabelas ainda não existirem no Supabase (ou ele estiver fora do ar),
+  // o site cai no banco local em vez de ficar travado em "Carregando…".
+  if (SUPABASE_READY){
+    const { error } = await sb.from('barbers').select('id').limit(1);
+    if (error){
+      console.warn('Supabase indisponível ou tabelas ainda não criadas — usando modo demonstração.', error.message || error);
+      sb = createLocalDb();
+      DEMO_MODE = true;
+    }
+  }
+  if (DEMO_MODE) document.getElementById('demo-bar').classList.add('on');
   loadBarbers();
   loadServices();
   loadProducts();
@@ -913,7 +928,7 @@ async function lookupMyAppointments(){
   listEl.innerHTML = '<div class="empty-state">Buscando…</div>';
 
   const { data, error } = await sb.from('appointments')
-    .select('*, barbers(name), services(name)')
+    .select(`*, barbers:${TABLE_PREFIX}barbers(name), services:${TABLE_PREFIX}services(name)`)
     .eq('client_contact', contact)
     .order('appt_date', { ascending: false });
 
@@ -1259,7 +1274,7 @@ async function renderMyAgenda(){
   const el = document.getElementById('panel-agenda-list');
   el.innerHTML = '<div class="empty-state">Carregando…</div>';
   const { data, error } = await sb.from('appointments')
-    .select('*, services(name)')
+    .select(`*, services:${TABLE_PREFIX}services(name)`)
     .eq('barber_id', currentBarberId)
     .eq('status', 'confirmado')
     .order('appt_date').order('appt_time');
