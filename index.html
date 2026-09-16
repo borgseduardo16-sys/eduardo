@@ -88,6 +88,13 @@
   nav.main-nav a:hover{color:var(--gold);background:var(--gold-soft);}
   @media (max-width:940px){ nav.main-nav{display:none;} }
 
+  /* ---- Demo bar ---- */
+  .demo-bar{
+    display:none;background:var(--gold-soft);border-bottom:1px solid var(--line);
+    color:var(--gold);font-size:13px;font-weight:600;text-align:center;padding:10px 24px;
+  }
+  .demo-bar.on{display:block;}
+
   /* ---- Hero ---- */
   .hero{position:relative;overflow:hidden;padding:70px 0 90px;}
   .hero::before{
@@ -306,6 +313,10 @@
     <a class="btn btn-gold btn-sm" href="#" onclick="openBooking();return false;">Agendar</a>
   </div>
 </header>
+
+<div id="demo-bar" class="demo-bar">
+  Modo demonstração — os agendamentos ficam salvos só neste navegador. Configure o Supabase para ativar o sistema real.
+</div>
 
 <!-- ============ VIEW: HOME (cliente) ============ -->
 <div id="view-home">
@@ -646,8 +657,133 @@ const BUSINESS_HOURS = {
 const SLOT_MINUTES = 30;
 
 /* ================= INIT ================= */
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Enquanto o Supabase não estiver configurado, o site roda com um banco local
+// (localStorage) para que tudo possa ser testado sem backend.
+const SUPABASE_READY = /^https?:\/\//.test(SUPABASE_URL) && !/^COLE_AQUI/.test(SUPABASE_KEY) && !!window.supabase;
+const sb = SUPABASE_READY ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : createLocalDb();
 if (EMAILJS_PUBLIC_KEY && window.emailjs) { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+
+function createLocalDb(){
+  const STORAGE_KEY = 'jlukas_demo_db_v1';
+
+  function uid(){
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random()*16|0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+
+  function seed(){
+    let n = 0;
+    const stamp = () => new Date(Date.UTC(2024,0,1,12,0,n++)).toISOString();
+    const row = extra => ({ id: uid(), active: true, created_at: stamp(), ...extra });
+    return {
+      barbers: [
+        row({ name:'Lukas Ferreira', specialty:'Cortes degradê, barba e sobrancelha', photo_url:null }),
+        row({ name:'Rafael Souza', specialty:'Cortes clássicos e infantis', photo_url:null }),
+      ],
+      services: [
+        row({ name:'Corte militar', price:30, duration_minutes:30 }),
+        row({ name:'Corte militar reto', price:30, duration_minutes:30 }),
+        row({ name:'Corte personalizado', price:30, duration_minutes:30 }),
+        row({ name:'Cortes infantis', price:30, duration_minutes:30 }),
+        row({ name:'Corte com tesoura', price:35, duration_minutes:40 }),
+        row({ name:'Corte em degradê', price:30, duration_minutes:30 }),
+        row({ name:'Barba', price:20, duration_minutes:20 }),
+        row({ name:'Barbear com toalha quente', price:60, duration_minutes:45 }),
+        row({ name:'Tingimento de barba', price:15, duration_minutes:15 }),
+        row({ name:'Graxa', price:20, duration_minutes:15 }),
+      ],
+      products: [
+        row({ name:'Shaving Gel com menta', price:40, description:'Gel de barbear sem espuma, com mentol. Prepara e acalma a pele para um barbear suave e preciso.' }),
+        row({ name:'Amend hair spray fixação ultra forte', price:55, description:'Spray de fixação ultra forte e longa duração, ideal para finalizar penteados sem pesar nos fios.' }),
+        row({ name:"Hino's Holy", price:45, description:'Óleo para cabelo 140ml. Para cabelos secos e desidratados, deixa o cabelo com aparência natural e brilhosa.' }),
+      ],
+      appointments: [],
+    };
+  }
+
+  let DB;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    DB = raw ? JSON.parse(raw) : seed();
+  } catch(e){ DB = seed(); }
+
+  function persist(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); } catch(e){}
+  }
+  persist();
+
+  function withRelations(rows, selectStr){
+    const relations = String(selectStr || '').match(/(\w+)\s*\(/g);
+    if (!relations) return rows;
+    const names = relations.map(r => r.replace(/\s*\($/, ''));
+    return rows.map(r => {
+      const copy = { ...r };
+      names.forEach(rel => {
+        const fk = rel.replace(/s$/, '') + '_id';
+        copy[rel] = (DB[rel] || []).find(x => x.id === r[fk]) || null;
+      });
+      return copy;
+    });
+  }
+
+  function from(table){
+    const state = { select:'*', filters:[], orders:[], action:'select', payload:null };
+    const matches = row => state.filters.every(([col, val]) => row[col] === val);
+
+    function run(){
+      const list = DB[table] || (DB[table] = []);
+
+      if (state.action === 'insert'){
+        const created = state.payload.map(item => ({
+          id: uid(), active: true, created_at: new Date().toISOString(), ...item,
+        }));
+        list.push(...created);
+        persist();
+        return { data: created, error: null };
+      }
+
+      if (state.action === 'update'){
+        const changed = [];
+        list.forEach((row, i) => {
+          if (matches(row)){ list[i] = { ...row, ...state.payload }; changed.push(list[i]); }
+        });
+        persist();
+        return { data: changed, error: null };
+      }
+
+      if (state.action === 'delete'){
+        DB[table] = list.filter(row => !matches(row));
+        persist();
+        return { data: [], error: null };
+      }
+
+      let rows = list.filter(matches);
+      // sorts são aplicados do menos para o mais significativo (Array.sort é estável)
+      state.orders.slice().reverse().forEach(([col, asc]) => {
+        rows.sort((a, b) => {
+          if (a[col] === b[col]) return 0;
+          return (a[col] > b[col] ? 1 : -1) * (asc ? 1 : -1);
+        });
+      });
+      return { data: withRelations(rows, state.select), error: null };
+    }
+
+    const builder = {
+      select(cols){ if (cols) state.select = cols; return builder; },
+      eq(col, val){ state.filters.push([col, val]); return builder; },
+      order(col, opts){ state.orders.push([col, !opts || opts.ascending !== false]); return builder; },
+      insert(rows){ state.action = 'insert'; state.payload = rows; return builder; },
+      update(patch){ state.action = 'update'; state.payload = patch; return builder; },
+      delete(){ state.action = 'delete'; return builder; },
+      then(resolve, reject){ return Promise.resolve(run()).then(resolve, reject); },
+    };
+    return builder;
+  }
+
+  return { from };
+}
 
 let BARBERS = [];
 let SERVICES = [];
@@ -655,6 +791,7 @@ let PRODUCTS = [];
 let currentBarberId = null; // identidade ativa no painel (sessão local)
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (!SUPABASE_READY) document.getElementById('demo-bar').classList.add('on');
   loadBarbers();
   loadServices();
   loadProducts();
