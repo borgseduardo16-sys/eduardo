@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Seu acesso — Renda Extra com IA</title>
+<meta name="theme-color" content="#07090B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07090B;--card:#0F1518;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--neon:#2BFF88;--neon-d:#14C96D;--gold:#FFD84A;--txt:#F2F5F3;--mut:#97A39D;
+    --fh:'Bricolage Grotesque',system-ui,sans-serif;--fb:'DM Sans',system-ui,sans-serif}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{min-height:100vh;background:var(--bg);color:var(--txt);font-family:var(--fb);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .bg{position:fixed;inset:0;pointer-events:none;background:radial-gradient(70% 45% at 50% 0%,rgba(43,255,136,.20),transparent 70%),radial-gradient(60% 40% at 100% 100%,rgba(59,108,255,.12),transparent 70%)}
+  .grid{position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 80% 50% at 50% 20%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse 80% 50% at 50% 20%,#000 20%,transparent 75%)}
+  main{position:relative;max-width:620px;margin:0 auto;padding:48px 20px 60px;text-align:center}
+  .check{position:relative;width:96px;height:96px;margin:0 auto 22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7DFFB8,var(--neon-d));display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 10px rgba(43,255,136,.12),0 0 60px rgba(43,255,136,.45);animation:pop .7s cubic-bezier(.2,1.4,.4,1) both}
+  .check svg{width:48px;height:48px}
+  .check svg path{stroke-dasharray:40;stroke-dashoffset:40;animation:draw .6s .35s ease forwards}
+  @keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--neon)}
+  h1{font-family:var(--fh);font-weight:800;font-size:clamp(34px,9vw,52px);line-height:1.04;letter-spacing:-.025em;margin:14px 0 14px}
+  h1 span{color:var(--neon);text-shadow:0 0 28px rgba(43,255,136,.45)}
+  .lead{color:#C7D0CB;font-size:18px}
+  .card{margin-top:30px;background:linear-gradient(180deg,#0E1714,#0A0F11);border:1px solid rgba(43,255,136,.3);border-radius:28px;padding:28px 22px;box-shadow:0 30px 70px rgba(0,0,0,.5)}
+  .card h2{font-family:var(--fh);font-weight:800;font-size:24px;margin-bottom:6px}
+  .card p.sub{color:var(--mut);font-size:15.5px;margin-bottom:22px}
+  .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:20px 24px;border-radius:16px;
+    background:linear-gradient(180deg,#4DFFA0,var(--neon-d));color:#04130A;font-family:var(--fh);font-weight:800;font-size:clamp(17px,4.8vw,20px);text-transform:uppercase;text-decoration:none;white-space:nowrap;
+    box-shadow:0 0 0 1px rgba(255,255,255,.2) inset,0 10px 0 #0B7A41,0 18px 40px rgba(43,255,136,.35);overflow:hidden;transition:transform .15s}
+  .btn::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:shine 3s ease-in-out infinite}
+  @keyframes shine{0%,55%{left:-40%}100%{left:130%}}
+  .btn:active{transform:translateY(6px)}
+  .btn svg{width:26px;height:26px;flex:none}
+  .btn.off{filter:grayscale(1);opacity:.6;pointer-events:none}
+  .steps{text-align:left;margin-top:26px;display:grid;gap:12px}
+  .step{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:14px 16px;font-size:15.5px}
+  .step b{color:#fff}
+  .step .n{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--neon);color:var(--neon);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:800;font-size:13px}
+  .tip{margin-top:18px;padding:14px 16px;border-radius:14px;background:rgba(255,216,74,.08);border:1px solid rgba(255,216,74,.3);color:#F3E3A6;font-size:14.5px;text-align:left}
+  .tip b{color:var(--gold)}
+  .help{margin-top:22px}
+  .help a{display:inline-flex;align-items:center;gap:10px;padding:14px 20px;border-radius:14px;border:1px solid var(--line2);color:var(--txt);text-decoration:none;font-weight:700;font-size:15px}
+  .help a svg{width:20px;height:20px;color:var(--neon)}
+  .note{margin-top:30px;font-size:13px;color:#6E7A74}
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="grid"></div>
+<main>
+  <div class="check"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="#04130A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <span class="eyebrow">Compra confirmada</span>
+  <h1>Parabéns pela compra e pelo <span>investimento!</span></h1>
+  <p class="lead">Você acabou de dar o primeiro passo pra transformar o ChatGPT na sua renda extra. Seu curso completo e os +2.000 prompts estão logo aqui embaixo.</p>
+
+  <div class="card">
+    <h2>Seu curso está pronto 🎓</h2>
+    <p class="sub">Clique no botão pra abrir a pasta do curso no Google Drive.</p>
+    <a class="btn" id="driveBtn" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M8 3h8l6 10-4 7H6l-4-7 6-10Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8 3 6 10H2M16 3l-6 10m12 0H10l-4 7" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      Acessar meu curso
+    </a>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><div>Clique em <b>"Acessar meu curso"</b>. A pasta abre no Google Drive.</div></div>
+      <div class="step"><span class="n">2</span><div>Entre com a <b>mesma conta Google do e-mail que você usou na compra</b>. O acesso é liberado só pra esse e-mail.</div></div>
+      <div class="step"><span class="n">3</span><div>Comece pelo módulo de <b>Boas-vindas</b> e siga a ordem das pastas. Os prompts de bônus estão na pasta própria.</div></div>
+    </div>
+    <div class="tip">💡 <b>Dica:</b> se aparecer "Você precisa de permissão", confira se está logado na conta Google certa (canto superior direito do Drive). A liberação pode levar até alguns minutos depois da compra.</div>
+  </div>
+
+  <div class="help" id="helpBox" hidden>
+    <a id="helpBtn" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7L4 20Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Precisa de ajuda? Fale com o suporte</a>
+  </div>
+
+  <p class="note">Este acesso é pessoal e intransferível. Bons estudos! 🚀</p>
+</main>
+<script>
+/* ===== CONFIG =====
+   DRIVE_URL: link da pasta do curso no Google Drive (com acesso RESTRITO).
+   SUPORTE_WHATSAPP: número com DDI+DDD só com dígitos (ex: 5561999999999). Deixe "" pra esconder o botão. */
+const DRIVE_URL = "";
+const SUPORTE_WHATSAPP = "";
+
+const drive = document.getElementById('driveBtn');
+if (DRIVE_URL) drive.href = DRIVE_URL; else drive.classList.add('off');
+if (SUPORTE_WHATSAPP) {
+  document.getElementById('helpBtn').href = 'https://wa.me/' + SUPORTE_WHATSAPP + '?text=' + encodeURIComponent('Olá! Comprei o curso Renda Extra com IA e preciso de ajuda com o acesso.');
+  document.getElementById('helpBox').hidden = false;
+}
+</script>
+</body>
+</html>

@@ -84,6 +84,11 @@
   .hero .lead{font-size:clamp(17px,4.4vw,20px);color:#C7D0CB;max-width:560px;margin:0 auto}
   .hero .price-teaser{margin:26px auto 22px;display:inline-flex;align-items:baseline;gap:12px;padding:12px 20px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
   .price-teaser s{color:var(--mut);font-size:16px}
+  .price-teaser .inv{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+  .roi{margin:14px auto 0;max-width:380px;font-size:14px;color:var(--mut)}
+  .roi b{color:var(--gold)}
+  .inv-quote{max-width:620px;margin:0 auto 34px;text-align:center;font-family:var(--fh);font-weight:500;font-size:clamp(19px,4.6vw,24px);line-height:1.35;color:#C7D0CB}
+  .inv-quote b{color:#fff}
   .price-teaser strong{font-family:var(--fh);font-size:30px;color:var(--neon)}
   .hero .live{margin-top:20px}
   .hero-visual{position:relative;height:430px;display:flex;align-items:center;justify-content:center;perspective:1600px}
@@ -313,7 +318,7 @@
       <span class="eyebrow">Curso completo + 2.000 prompts</span>
       <h1>Transforme o ChatGPT na sua <span class="hl">renda extra.</span></h1>
       <p class="lead">Enquanto a maioria usa a inteligência artificial pra pedir piada, tem gente usando a <b>mesma ferramenta</b> pra vender serviços todos os dias. Aprenda o passo a passo, do zero ao avançado.</p>
-      <div class="price-teaser"><s>R$ 89,90</s><strong>R$ 49,90</strong></div>
+      <div class="price-teaser"><span class="inv">Investimento único</span><s>R$ 89,90</s><strong>R$ 49,90</strong></div>
       <div>
         <a class="btn" href="#oferta" data-checkout>Quero meu acesso agora <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       </div>
@@ -478,6 +483,7 @@
 <section class="offer" id="oferta">
   <div class="glow g1"></div>
   <div class="wrap">
+    <p class="inv-quote rv">Isso não é um gasto. É um <b>investimento</b> numa habilidade que você vai usar todos os dias.</p>
     <div class="offer-card rv">
       <div class="offer-in">
         <span class="ribbon">Oferta de lançamento</span>
@@ -503,10 +509,11 @@
           <li><span><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4.5 4.5L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>7 dias de garantia</span></li>
         </ul>
         <div class="price">
-          <div class="from">De <s>R$ 89,90</s> por apenas</div>
+          <div class="from">Seu investimento hoje: de <s>R$ 89,90</s> por</div>
           <div class="now"><small>R$</small><big>49</big><sup>,90</sup></div>
           <div class="inst">à vista no Pix ou parcelado em até <b>12x no cartão</b></div>
           <span class="save">Você economiza R$ 40,00</span>
+          <p class="roi">Pra ter ideia: um único pacote de 30 posts tem valor de referência de <b>R$ 150</b> no mercado.*</p>
         </div>
         <a class="btn" href="#oferta" data-checkout>Quero meu acesso agora <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <div class="pay"><span>⚡ Pix</span><span>💳 Cartão em até 12x</span><span>🔒 Cakto</span></div>
@@ -582,7 +589,7 @@
   <div class="wrap">
     <span class="eyebrow">Sua decisão</span>
     <h2>Continue pedindo piada pro ChatGPT… <span class="hl">ou faça ele trabalhar pra você.</span></h2>
-    <p>Por <b>R$ 49,90</b> você recebe o curso completo, mais de 2.000 prompts de bônus e 7 dias de garantia.</p>
+    <p>Um investimento único de <b>R$ 49,90</b> em você: curso completo, mais de 2.000 prompts de bônus e 7 dias de garantia.</p>
     <a class="btn" href="#oferta" data-checkout>Quero começar agora <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     <div class="btn-note">
       <span>🔒 Pagamento seguro pela Cakto</span><span>✉️ Acesso no seu e-mail</span><span>🛡️ 7 dias de garantia</span>
