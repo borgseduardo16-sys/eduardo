@@ -69,7 +69,7 @@ Página limpa, sem lista gigante.
 
 ---
 
-## T. "Parte 3 — Busca, Mapa, 'Perto de mim' e Página do Espaço" (prompt para desenvolvedor)
+## T. ~~Parte 3 — Busca, Mapa, Página do Espaço~~ — ❌ DESCARTADO (outro projeto, ver DECISOES.md #1)
 
 > ⚠️ Este texto fala de um **marketplace de ESPAÇOS** (vaga de carro/moto, garagem, armazenamento, galpão,
 > sala, loja, terreno), cita "Partes 1 e 2" de outro projeto e um modelo de **3% locatário + 3% proprietário**.
