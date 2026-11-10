@@ -95,3 +95,34 @@ Visualizações · Cliques · Contatos/mensagens · Salvos · Visitas agendadas 
 
 ### Custos a prever
 Verificação de identidade é cobrada por consulta pelo provedor; certidões de imóvel têm custo de cartório; revisão humana tem custo de equipe. Pode ser bancado em parte pela receita de anúncios.
+
+---
+
+## Parte 3 — Pagamento retido até a entrega das chaves (fluxo proposto)
+
+### Linha do tempo
+1. **Pagamento** pelo app (Pix). Dinheiro fica retido; ninguém recebe ainda.
+2. **Até a data de entrada:** pode ser dias ou semanas depois (reserva antecipada, ex.: mora em Colatina e vai alugar no Rio).
+3. **Entrega das chaves:** o proprietário marca "Chaves entregues" no app (de preferência os dois juntos, com localização e foto).
+4. **Janela de confirmação: 72 h** a partir da entrega (ou da data de entrada, se o proprietário não marcar). O inquilino escolhe:
+   - ✅ **"Recebi as chaves, está tudo certo"** → dinheiro liberado ao proprietário na hora; Premora recebe as taxas.
+   - ⚠️ **"Tenho um problema"** (não recebi as chaves / imóvel diferente do anúncio / não é o dono) → dinheiro continua retido; abre análise com provas (fotos, chat, vistoria).
+   - 💤 **Não faz nada** → **liberação automática** ao proprietário ao fim das 72 h (silêncio = tudo certo). Avisos para o inquilino em 24 h e 2 h antes.
+5. Inquilino pode confirmar **antes** das chaves, se quiser (avisado de que perde a proteção).
+
+### Por que o silêncio libera para o proprietário (e não devolve ao inquilino)
+Se "não confirmou em 3 dias" devolvesse o dinheiro, o golpe passaria para o outro lado: o inquilino pega as chaves,
+não confirma, recebe o dinheiro de volta e fica morando de graça. A proteção do inquilino vem do botão
+"Tenho um problema", que ele tem 72 h para apertar. Quem foi enganado sempre aperta.
+
+### Quando há problema
+- Análise com prazo (ex.: até 5 dias úteis), com evidências dos dois lados.
+- Golpe confirmado → **100% devolvido ao inquilino, taxas incluídas**; anunciante banido.
+- Imóvel diferente do anúncio → devolução ou acordo (ex.: desconto), decidido por humano.
+- Proprietário não entregou as chaves na data → inquilino pode cancelar com devolução total.
+
+### Cancelamento antes da entrada (reserva antecipada)
+Precisa de regra clara. Sugestão: devolução total até X dias antes da data de entrada; depois disso, regra combinada no contrato. ⚖️ Validar com advogado (art. 20 da Lei do Inquilinato sobre pagamento antecipado — aqui o dinheiro fica retido e não vai ao locador antes da entrada, o que ajuda).
+
+### Meses seguintes
+A retenção vale para o **1º pagamento** (onde o golpe acontece). Do 2º mês em diante, cobrança normal com split, de preferência Pix Automático.
