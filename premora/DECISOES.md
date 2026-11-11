@@ -16,3 +16,7 @@ Registro das decisões tomadas. Quando houver conflito com as notas, **vale o qu
 | 10 | 2026-11-10 | **Premium R$ 119,90/mês.** Benefício do proprietário: **Painel do Investidor + R$ 50/mês em créditos de anúncio** bancados pela plataforma. Benefício do inquilino: **painel/comparador de imóveis**. Outros benefícios a definir. **Removido** o benefício do 1º aluguel (R$ 100) do MyPlace. |
 | 11 | 2026-11-10 | **Pagamento retido até a confirmação das chaves (aprovado).** Pode pagar antecipado para reservar; confirma quando receber as chaves (ou antes, se quiser). **A Premora só ganha quando o dinheiro é liberado**; se der problema, o inquilino recebe **100% de volta, taxas incluídas**. Regra para "inquilino que não confirma" em `ANUNCIOS-E-SEGURANCA.md` (Parte 3). |
 | 12 | 2026-11-10 | Marketing: **não** dizer "100% seguro"; vender os sistemas concretos ("você só paga de verdade quando tiver as chaves em mãos"). |
+| 13 | 2026-11-11 | **Premium mantém 50% de desconto na taxa** de quem assina (2% → 1%), além dos benefícios da decisão #10. |
+| 14 | 2026-11-11 | **Recarga mínima de créditos: R$ 10** (substitui os R$ 35 da #9). Créditos gastos em cliques são receita da Premora; anúncios devem ser a **principal fonte de renda**. |
+| 15 | 2026-11-11 | **Pix Automático** entra como forma de pagamento do aluguel. |
+| 16 | 2026-11-11 | Regra do "inquilino que não confirma" (silêncio libera em 72 h) fica como proposta; revisar mais à frente. |
