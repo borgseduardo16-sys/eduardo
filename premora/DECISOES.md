@@ -21,3 +21,7 @@ Registro das decisões tomadas. Quando houver conflito com as notas, **vale o qu
 | 15 | 2026-11-11 | **Pix Automático** entra como forma de pagamento do aluguel. |
 | 16 | 2026-11-11 | Regra do "inquilino que não confirma" (silêncio libera em 72 h) fica como proposta; revisar mais à frente. |
 | 17 | 2026-11-11 | **Um CPF pode ter várias contas** (e-mails diferentes, ex.: uma de inquilino e outra de proprietário), **cada uma com seu Premium**. Substitui a regra "um Premium por pessoa" do MyPlace. Continua valendo: banimento por golpe vale para **todas** as contas do CPF; avaliações e locações entre contas do mesmo CPF não contam para reputação. |
+| 18 | 2026-11-11 | **Código base: MyPlace** (repositório `borgseduardo16-sys/eduardoo`), adaptado de espaços para casa/apartamento. |
+| 19 | 2026-11-11 | **Repositório novo** só da Premora (a criar no GitHub). |
+| 20 | 2026-11-11 | **Cidade-piloto: Colatina e região.** |
+| 21 | 2026-11-11 | Próximo passo: **documento mestre** (`ESPECIFICACAO.md`) antes de programar. |
