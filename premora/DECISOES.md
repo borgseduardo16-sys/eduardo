@@ -20,3 +20,4 @@ Registro das decisões tomadas. Quando houver conflito com as notas, **vale o qu
 | 14 | 2026-11-11 | **Recarga mínima de créditos: R$ 10** (substitui os R$ 35 da #9). Créditos gastos em cliques são receita da Premora; anúncios devem ser a **principal fonte de renda**. |
 | 15 | 2026-11-11 | **Pix Automático** entra como forma de pagamento do aluguel. |
 | 16 | 2026-11-11 | Regra do "inquilino que não confirma" (silêncio libera em 72 h) fica como proposta; revisar mais à frente. |
+| 17 | 2026-11-11 | **Um CPF pode ter várias contas** (e-mails diferentes, ex.: uma de inquilino e outra de proprietário), **cada uma com seu Premium**. Substitui a regra "um Premium por pessoa" do MyPlace. Continua valendo: banimento por golpe vale para **todas** as contas do CPF; avaliações e locações entre contas do mesmo CPF não contam para reputação. |
